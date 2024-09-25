@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR 코드 생성</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>QR 코드 생성</h1>
+        <form id="qrForm">
+            <div class="form-group">
+                <label for="itemUrl">물품 정보 URL</label>
+                <input type="text" class="form-control" id="itemUrl" required>
+            </div>
+            <button type="button" onclick="generateQRCode()">QR 코드 생성</button>
+        </form>
+        <div id="qrcode"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            const itemUrl = document.getElementById('itemUrl').value;
+            QRCode.toDataURL(itemUrl, function (err, url) {
+                if (!err) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    document.getElementById('qrcode').appendChild(img);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

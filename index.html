@@ -3,166 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>교회 물품 관리 시스템</title>
+    <title>물품 관리 시스템 메인</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { padding-top: 50px; }
         .main-container { max-width: 700px; margin: 0 auto; }
         h1 { text-align: center; margin-bottom: 30px; }
         .btn { padding: 15px; font-size: 18px; }
-        #addForm, #searchForm, #deleteForm, #itemList { display: none; }
     </style>
 </head>
 <body>
     <div class="container main-container">
-        <h1>교회 물품 관리 시스템</h1>
+        <h1>물품 관리 시스템 메인</h1>
         <p class="text-center">교회 물품을 관리하고 대여 상태를 쉽게 확인하세요.</p>
         <div class="row text-center">
             <div class="col-md-6 mb-3">
-                <button onclick="showSection('addForm')" class="btn btn-primary btn-block">물품 추가</button>
+                <a href="add_item.html" class="btn btn-primary btn-block">물품 추가</a>
             </div>
             <div class="col-md-6 mb-3">
-                <button onclick="showSection('searchForm')" class="btn btn-secondary btn-block">물품 검색</button>
+                <a href="search_item.html" class="btn btn-secondary btn-block">물품 검색</a>
             </div>
             <div class="col-md-6 mb-3">
-                <button onclick="showSection('deleteForm')" class="btn btn-danger btn-block">물품 삭제</button>
+                <a href="delete_item.html" class="btn btn-danger btn-block">물품 삭제</a>
             </div>
             <div class="col-md-6 mb-3">
-                <button onclick="showSection('itemList')" class="btn btn-info btn-block">모든 물품 조회</button>
+                <a href="view_items.html" class="btn btn-info btn-block">모든 물품 조회</a>
             </div>
-        </div>
-
-        <!-- 물품 추가 폼 -->
-        <div id="addForm">
-            <h2>물품 추가</h2>
-            <form id="addItemForm">
-                <div class="form-group">
-                    <label for="item_id">물품 ID</label>
-                    <input type="text" class="form-control" id="item_id" required>
-                </div>
-                <div class="form-group">
-                    <label for="item_name">물품 이름</label>
-                    <input type="text" class="form-control" id="item_name" required>
-                </div>
-                <div class="form-group">
-                    <label for="manager">관리인</label>
-                    <input type="text" class="form-control" id="manager" required>
-                </div>
-                <div class="form-group">
-                    <label for="department">부서</label>
-                    <input type="text" class="form-control" id="department" required>
-                </div>
-                <div class="form-group">
-                    <label for="borrow_date">대여 날짜</label>
-                    <input type="date" class="form-control" id="borrow_date" required>
-                </div>
-                <div class="form-group">
-                    <label for="is_borrowed">대여 상태</label>
-                    <select class="form-control" id="is_borrowed" required>
-                        <option value="0">반납됨</option>
-                        <option value="1">대여 중</option>
-                    </select>
-                </div>
-                <button type="button" onclick="addItem()" class="btn btn-primary btn-block">물품 추가</button>
-            </form>
-        </div>
-
-        <!-- 물품 검색 폼 -->
-        <div id="searchForm">
-            <h2>물품 검색</h2>
-            <form id="searchItemForm">
-                <div class="form-group">
-                    <label for="search_term">검색어 입력</label>
-                    <input type="text" class="form-control" id="search_term" required>
-                </div>
-                <button type="button" onclick="searchItem()" class="btn btn-secondary btn-block">물품 검색</button>
-            </form>
-            <div id="searchResult"></div>
-        </div>
-
-        <!-- 물품 삭제 폼 -->
-        <div id="deleteForm">
-            <h2>물품 삭제</h2>
-            <form id="deleteItemForm">
-                <div class="form-group">
-                    <label for="delete_id">삭제할 물품 ID 입력</label>
-                    <input type="text" class="form-control" id="delete_id" required>
-                </div>
-                <button type="button" onclick="deleteItem()" class="btn btn-danger btn-block">물품 삭제</button>
-            </form>
-        </div>
-
-        <!-- 모든 물품 조회 -->
-        <div id="itemList">
-            <h2>모든 물품 목록</h2>
-            <ul id="itemListContainer" class="list-group"></ul>
+            <div class="col-md-12 mb-3">
+                <a href="qr_code.html" class="btn btn-success btn-block">QR 코드 생성</a>
+            </div>
         </div>
     </div>
-
-    <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('div[id$="Form"], #itemList').forEach(div => div.style.display = 'none');
-            document.getElementById(sectionId).style.display = 'block';
-        }
-
-        function getItems() {
-            return JSON.parse(localStorage.getItem('items') || '[]');
-        }
-
-        function setItems(items) {
-            localStorage.setItem('items', JSON.stringify(items));
-        }
-
-        function addItem() {
-            const items = getItems();
-            const newItem = {
-                id: document.getElementById('item_id').value,
-                name: document.getElementById('item_name').value,
-                manager: document.getElementById('manager').value,
-                department: document.getElementById('department').value,
-                date: document.getElementById('borrow_date').value,
-                status: document.getElementById('is_borrowed').value
-            };
-            items.push(newItem);
-            setItems(items);
-            alert('물품이 추가되었습니다.');
-            document.getElementById('addItemForm').reset();
-        }
-
-        function searchItem() {
-            const searchTerm = document.getElementById('search_term').value;
-            const items = getItems();
-            const result = items.find(item => item.id === searchTerm || item.name === searchTerm);
-            const resultDiv = document.getElementById('searchResult');
-            if (result) {
-                resultDiv.innerHTML = `<p>물품 ID: ${result.id}</p><p>물품 이름: ${result.name}</p>`;
-            } else {
-                resultDiv.innerHTML = '<p>물품을 찾을 수 없습니다.</p>';
-            }
-        }
-
-        function deleteItem() {
-            const deleteId = document.getElementById('delete_id').value;
-            let items = getItems();
-            items = items.filter(item => item.id !== deleteId);
-            setItems(items);
-            alert('물품이 삭제되었습니다.');
-            document.getElementById('deleteItemForm').reset();
-        }
-
-        function displayItems() {
-            const items = getItems();
-            const container = document.getElementById('itemListContainer');
-            container.innerHTML = '';
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item');
-                li.innerText = `${item.id}: ${item.name} - ${item.status === '1' ? '대여 중' : '반납됨'}`;
-                container.appendChild(li);
-            });
-        }
-
-        document.querySelector('button.btn-info').addEventListener('click', displayItems);
-    </script>
 </body>
 </html>
